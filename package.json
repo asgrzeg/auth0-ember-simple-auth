@@ -38,7 +38,7 @@
     "ember-disable-proxy-controllers": "1.0.1",
     "ember-export-application-global": "1.0.4",
     "ember-getowner-polyfill": "^1.0.1",
-    "ember-simple-auth": "1.0.1",
+    "ember-simple-auth": "1.1.0",
     "ember-try": "0.1.2",
     "phantomjs": "2.1.3"
   },
