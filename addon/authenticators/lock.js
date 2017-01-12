@@ -243,9 +243,9 @@ export default BaseAuthenticator.extend({
     this.set('_domain', config.domain);
 
     var lock = new Auth0Lock(this.get('clientID'), this.get('domain'), {
+      autoclose: true,
       auth: {
         redirect: false,
-        autoclose: true,
         params: {
           scope: 'openid app_metadata user_metadata'
         }
