@@ -192,14 +192,23 @@ export default BaseAuthenticator.extend({
   },
 
   authenticate (options) {
+    var Lib = this;
     return new Ember.RSVP.Promise((res) => {
-      this.get('lock').show(options, (err, profile, jwt, accessToken, state, refreshToken) => {
-        if (err) {
-          this.onAuthError(err);
-        } else {
-          var sessionData = { profile, jwt, accessToken, refreshToken };
-          this.afterAuth(sessionData).then(response => res(this._setupFutureEvents(response)));
-        }
+      this.get('lock').show();
+      this.get('lock').on("authenticated", function(authResult) {
+        Lib.get('lock').getUserInfo(authResult.accessToken, function(error, profile) {
+          if (error) {
+            Lib.onAuthError(error);
+            return;
+          }
+          var sessionData = {
+            profile: profile,
+            jwt: authResult.idToken,
+            accessToken: authResult.accessToken,
+            refreshToken: ''
+          };
+          Lib.afterAuth(sessionData).then(response => res(Lib._setupFutureEvents(response)));
+        });
       });
     });
   },
@@ -233,7 +242,14 @@ export default BaseAuthenticator.extend({
     this.set('_clientID', config.clientID);
     this.set('_domain', config.domain);
 
-    var lock = new Auth0Lock(this.get('clientID'), this.get('domain'));
+    var lock = new Auth0Lock(this.get('clientID'), this.get('domain'), {
+      auth: {
+        redirect: false,
+        params: {
+          scope: 'openid app_metadata user_metadata'
+        }
+    }});
+
     this.set('_lock', lock);
 
     this._super();
