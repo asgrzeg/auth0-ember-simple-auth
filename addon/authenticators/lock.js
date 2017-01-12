@@ -245,10 +245,12 @@ export default BaseAuthenticator.extend({
     var lock = new Auth0Lock(this.get('clientID'), this.get('domain'), {
       auth: {
         redirect: false,
+        autoclose: true,
         params: {
           scope: 'openid app_metadata user_metadata'
         }
-    }});
+      }
+    });
 
     this.set('_lock', lock);
 
